@@ -1,0 +1,12 @@
+.nhaplieu{
+    text-align: center;
+    border: none;
+    outline: none;    
+    border-right: 1px solid blue;
+    border-right-style: dotted;    
+    margin-right: 2px;
+    padding: 0 2px;
+    font-size: 16pt;
+    width: 18px;
+    cursor: pointer;
+}

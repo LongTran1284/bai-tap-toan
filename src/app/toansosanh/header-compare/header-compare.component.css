@@ -1,0 +1,22 @@
+.left{
+    padding-right: 5px;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+
+
+input{
+    width: 40px;
+    margin-left: 3px;
+    margin-right: 3px;
+    padding-left: 0;
+    padding-right: 0;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+.ani{
+    transition: all 0.3s ease;
+}
