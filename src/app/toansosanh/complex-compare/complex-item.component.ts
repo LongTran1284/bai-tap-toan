@@ -122,6 +122,7 @@ export class ComplexItemComponent {
     ngOnInit(){
         this.val1 = this.createVal(this.num1)
         this.val2 = this.createVal(this.num2)        
+        // console.log('this.val1:', this.val1, "this.val2:", this.val2)
     }
 
     createVal(num: number){
