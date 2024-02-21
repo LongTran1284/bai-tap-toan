@@ -125,7 +125,8 @@ export class ComplexItemComponent {
     }
 
     createVal(num: number){
-        let pheptoan: string = this.random.randomValue(['cong', 'tru', 'nhan', 'chia'])
+        // let pheptoan: string = this.random.randomValue(['cong', 'tru', 'nhan', 'chia'])
+        let pheptoan: string = this.random.randomValue(['cong', 'tru'])
         let val1: number = this.random.ranum(1, num)
         let val2: number
         let val: string
