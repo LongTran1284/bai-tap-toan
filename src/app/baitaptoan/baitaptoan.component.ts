@@ -18,7 +18,7 @@ import { EventService } from '../services/EventService';
     HeaderComponent, ChiaComponent, NhanComponent, CongComponent, TruComponent
   ],
   template: `
-    <div class="container p-3 shadow mb-5 bg-body rounded" style="min-width: 800px;">
+    <div class="container p-3 shadow mb-5 bg-body rounded" >
       <div class="mb-0 sticky-top" id="#">
         <app-header
           (generate_click)="generateList($event)"

@@ -15,29 +15,13 @@ import {routes} from './app.routes'
     BaitaptoanComponent
   ],
   template: `
-    <!-- <nav class="navbar navbar-expand-lg bg-light"> -->
-      <!-- <div class="container-fluid"> -->
-        <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
-          <!-- <ul class="navbar-nav me-auto mb-2 mb-lg-0"> -->
-          <!-- <ul class="nav nav-pills bg-light">
-            <li class="nav-item ">
-              <a class="nav-link active" routerLink='/' data-toggle="pill">Toán Tính</a>
-            </li>
-            <li class="nav-item" >
-              <a class="nav-link" routerLink="sosanh" data-toggle="pill">Toán So Sánh</a>
-            </li>
-          </ul>           -->
-        <!-- </div> -->
-      <!-- </div> -->
-    <!-- </nav> -->
+    
     <div class="container-fluid">
       <nav class="nav nav-pills bg-light">         
-        <!-- <a class="nav-link" [ngClass]="title===route[0]['title'] ? 'active' : ''" [routerLink]="[route[0]['path']]">Toán Tính</a>
-        <a class="nav-link" [ngClass]="title===route[1]['title'] ? 'active' : ''" [routerLink]="[route[1]['path']]">Toán So Sánh</a>       -->
         <button class="nav-link" [ngClass]="title===route[0]['title'] ? 'active' : ''" [routerLink]="[route[0]['path']]">Toán Tính</button>
         <button class="nav-link" [ngClass]="title===route[1]['title'] ? 'active' : ''" [routerLink]="[route[1]['path']]">Toán So Sánh</button> 
       </nav>
-    <!-- </div> -->
+      
       <router-outlet></router-outlet>
     </div>
   `,

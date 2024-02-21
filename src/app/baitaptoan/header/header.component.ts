@@ -9,9 +9,9 @@ import { FormsModule } from '@angular/forms';
     CommonModule, FormsModule
   ],
   template: `
-  <div class="container shadow-sm px-3">
+  <div class="container-fluid shadow-sm px-3">
     <div class="row">
-      <div class="col-5">        
+      <div class="col-lg-5 col-xs-3">        
         <div >
           <span class="left" [style.width.px]="texts[pheptoan]['width']">
            {{ texts[pheptoan]['text1'] }} <span>:</span> 
@@ -43,7 +43,7 @@ import { FormsModule } from '@angular/forms';
         </div>        
       </div>
 
-      <div class="col-3 ">
+      <div class="col-lg-3 col-xs-8">
       <!-- d-flex flex-column justify-content-evenly flex-fill -->
           <div class="d-flex justify-content-center h-50 ">          
             <input type="radio" class="btn-check" name="pheptoan" id="nhan" 
@@ -66,14 +66,14 @@ import { FormsModule } from '@angular/forms';
           </div>
       </div>
 
-      <div class="col-4">
-      <div class="row h-100">      
-        <div class="col-6 btn-group-vertical">
-          <button class="btn ani btn-secondary " (click)="unDo()">Undo</button>
-          <button class="btn ani btn-danger " (click)="clearAll()">Clear All</button>
+      <div class="col-lg-4 col-xs-12">
+        <div class="row h-100">      
+          <div class="col-6 btn-group-vertical">
+            <button class="btn ani btn-secondary " (click)="unDo()">Undo</button>
+            <button class="btn ani btn-danger " (click)="clearAll()">Clear All</button>
+          </div>
+          <button class="col-6 btn ani btn-primary" (click)="onClick()">Generate <br> number</button>
         </div>
-        <button class="col-6 btn ani btn-primary" (click)="onClick()">Generate <br> number</button>
-      </div>
       </div>
     </div>
   </div>
