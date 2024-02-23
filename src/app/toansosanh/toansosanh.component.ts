@@ -55,6 +55,7 @@ export class ToansosanhComponent {
     private random: RandomService
     ){
     this.eventService.emitt('updateTitle', this.route.snapshot.title)
+    // console.log('title:', this.route.snapshot.title)
   }
 
 

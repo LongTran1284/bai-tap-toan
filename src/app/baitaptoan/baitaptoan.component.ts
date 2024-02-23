@@ -89,6 +89,7 @@ export class BaitaptoanComponent {
     private eventService: EventService
   ){      
       this.eventService.emitt('updateTitle', this.route.snapshot.title)
+      // console.log('title:', this.route.snapshot.title)
   }
 
 

@@ -35,5 +35,6 @@ export class AppComponent {
     this.eventService.listen('updateTitle', (title: string)=>{
       this.title = title
     })
+    // console.log(this.title)
   }
 }
