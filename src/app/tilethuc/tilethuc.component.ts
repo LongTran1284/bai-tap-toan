@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EventService } from '../services/EventService';
 import { RandomService } from '../services/random.service';
 
-import { HeaderTilethucComponent } from './header-tilethuc/header-tilethuc.component';
+// import { HeaderTilethucComponent } from './header-tilethuc/header-tilethuc.component';
 import { BtnGroupComponent } from '../shared/btn-group/btn-group.component';
 import { DivisorService } from '../services/divisor.service';
 import { WorkTilethucComponent } from './work-tilethuc/work-tilethuc.component';
