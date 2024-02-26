@@ -22,10 +22,11 @@ import { CommonModule } from '@angular/common';
           (clearall_click)="clearAll()"
           (undo_click)="undo_click()"
           [level]="level"
-          (radio_change)="level = $event"
-        ></sosanh-header>
+          (radio_change)="level = $event; complete = 0"
+        ></sosanh-header>        
       </div>
-      <div class="mt-3">
+      <div class="my-3 mx-3">Hoàn thành: {{ complete }}/{{ total }}</div>
+      <div class="mt-3">      
         <div *ngIf="level==='simple'">
           <simple-compare
             [num_list_1]="num_list_1"
@@ -48,6 +49,8 @@ export class ToansosanhComponent {
   num_list_1: any[] = [];
   num_list_2: any[] = []
   level: string = 'complex'
+  complete: number = 0
+  total: number = 0
   
   constructor(
     private route: ActivatedRoute, 
@@ -55,7 +58,7 @@ export class ToansosanhComponent {
     private random: RandomService
     ){
     this.eventService.emitt('updateTitle', this.route.snapshot.title)
-    // console.log('title:', this.route.snapshot.title)
+    this.eventService.listen('updateSoSanh', (comp: number)=> this.complete += comp)
   }
 
 
@@ -81,6 +84,7 @@ export class ToansosanhComponent {
       this.num_list_1.push(num1);
       this.num_list_2.push(num2);
     }
+    this.total += num[1]
     
   }
 

@@ -3,6 +3,7 @@ import { BottomControlComponent } from '../bottomcontrol/bottomcontrol.component
 import { RandomService } from '../../services/random.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { EventService } from '../../services/EventService';
 
 @Component({
   selector: 'simple-item',
@@ -36,6 +37,8 @@ export class SimpleItemComponent {
     @Input() num1: number = 0
     @Input() num2: number = 0
 
+    constructor(private eventService: EventService){}
+
     
     makeCompare(value: string){
         this.value = value
@@ -50,11 +53,16 @@ export class SimpleItemComponent {
 
         if (value===result){
             this.pass = true
-        } else (this.pass=false)
+            this.eventService.emitt('updateSoSanh', 1)
+        } else {
+            if (this.pass){this.eventService.emitt('updateSoSanh', -1)}
+            this.pass=false
+        }
         
     }
 
     clearCompare(){
+        if (this.pass){this.eventService.emitt('updateSoSanh', -1)}
         this.value = ''
         this.pass = false
     }

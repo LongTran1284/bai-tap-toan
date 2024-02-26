@@ -21,14 +21,16 @@ import { WorkInterface } from './workinterface';
   ],
   template: `
     <div class="container-fluid p-3 shadow mb-5 bg-body rounded">
+      
       <div class="container mb-3">
         <btn-group
           (generate_click)="createNumList()"
           (clearall_click)="clearAll()"
-          (undo_click)="undo_click()"
-          
+          (undo_click)="undo_click()"          
         ></btn-group>
+        <div class="my-3">Hoàn thành: {{ complete }}/{{ total }}</div>
       </div>
+      
       <div class="mt-3">
         <div >
           <work-tilethuc [works]="values"></work-tilethuc>
@@ -38,12 +40,11 @@ import { WorkInterface } from './workinterface';
   `,
   styleUrl: './tilethuc.component.css'
 })
-export class TilethucComponent {
-  // x_list: number[] = [];
-  // y_list: number[] = []
+export class TilethucComponent {  
   digit_number: number = 2 // number has 2 digits
   values: WorkInterface[] = [];
-  // y_values: any = {};
+  total: number = 0
+  complete: number = 0
 
   constructor(
     private random: RandomService, 
@@ -52,12 +53,14 @@ export class TilethucComponent {
     private dvs: DivisorService
   ){      
       this.eventService.emitt('updateTitle', this.route.snapshot.title)
+      this.eventService.listen('updateTiLeThuc', (comp: number)=> this.complete += comp)
   }
 
   createNumList(){
     const max = this.random.maxNumDigit(this.digit_number)
     const min = this.random.minNumDigit(this.digit_number)
-    for (let x=0; x < 3; x++) {        
+    const sl = 3
+    for (let x=0; x < sl; x++) {        
       let x_value: number = this.random.ranum(min, max)
       let y_value: number = this.random.ranum(2,10)
       let tinh = this.random.randomValue(['+', '-'])
@@ -95,13 +98,16 @@ export class TilethucComponent {
       )
 
     }
-    // console.log(this.values)
+    this.total += sl
+    console.log(this.values)
   }
 
   
 
   clearAll(){
     this.values = []
+    this.total = 0
+    this.complete = 0
   }
 
   undo_click(){

@@ -8,6 +8,7 @@ import { TruItemComponent } from '../../baitaptoan/pheptoan/tru/tru-item.compone
 import { CommonModule } from '@angular/common';
 import { NhanItemComponent } from '../../baitaptoan/pheptoan/nhan/nhan-item.component';
 import { ChiaItemComponent } from '../../baitaptoan/pheptoan/chia/chia-item.component';
+import { EventService } from '../../services/EventService';
 
 interface valItem {
     text: string,
@@ -117,7 +118,7 @@ export class ComplexItemComponent {
     pheptoan1: string = ''
     pheptoan2: string = ''
 
-    constructor(private random: RandomService){}
+    constructor(private random: RandomService, private eventService: EventService){}
 
     ngOnInit(){
         this.val1 = this.createVal(this.num1)
@@ -168,11 +169,16 @@ export class ComplexItemComponent {
 
         if (value===result){
             this.pass = true
-        } else (this.pass=false)
+            this.eventService.emitt('updateSoSanh', 1)
+        } else {
+            if (this.pass){this.eventService.emitt('updateSoSanh', -1)}
+            this.pass=false
+        }
         
     }
 
     clearCompare(){
+        if (this.pass){this.eventService.emitt('updateSoSanh', -1)}
         this.value = ''
         this.pass = false
     }

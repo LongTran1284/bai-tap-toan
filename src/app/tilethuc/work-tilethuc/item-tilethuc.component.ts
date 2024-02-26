@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 import { WorkInterface } from '../workinterface'; 
 import { ClearComponent } from '../../baitaptoan/clear/clear.component';
 import { FormsModule } from '@angular/forms';
+import { EventService } from '../../services/EventService';
 
 @Component({
   selector: 'item-tilethuc',
@@ -56,7 +57,11 @@ export class ItemTilethucComponent {
     x_value!: string
     y_value!: string
 
+    constructor(private eventService: EventService){
+    }
+
     clearTinhToan(){
+        if (this.pass){this.eventService.emitt('updateTiLeThuc', -1)}
         this.pass = false
         this.x_value = ''
         this.y_value = ''
@@ -65,6 +70,11 @@ export class ItemTilethucComponent {
     checkResult(){
         if (parseInt(this.x_value) === this.item.x && parseInt(this.y_value) === this.item.y){
             this.pass = true
-        } else {this.pass = false}
+            this.eventService.emitt('updateTiLeThuc', 1)
+        } else {
+            if (this.pass){this.eventService.emitt('updateTiLeThuc', -1)}
+            this.pass = false
+            
+        }
     }
 }
