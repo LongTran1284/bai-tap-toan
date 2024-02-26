@@ -14,6 +14,25 @@ export class RandomService {
     return this.ranum(min, max);
   }
 
+  superRandom(digit:number){
+    var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+    const min = Math.pow(10, digit-1) > 1 ? Math.pow(10, digit-1) : 2;
+    const max = Math.pow(10, digit);
+    return this.ranum(min, max) * plusOrMinus;
+  }
+
+  plusOrMinus(): number {
+    return Math.random() < 0.5 ? -1 : 1;
+  }
+
+  maxNumDigit(digit: number): number {
+    return Math.pow(10, digit);
+  }
+
+  minNumDigit(digit: number): number {
+    return Math.pow(10, digit-1) > 1 ? Math.pow(10, digit-1) : 2;
+  }
+
   ranum(min: number, max: number){
     return Math.floor(Math.random() * (max - min) ) + min;
   }

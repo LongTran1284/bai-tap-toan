@@ -18,8 +18,16 @@ import {routes} from './app.routes'
     
     <div class="container-fluid">
       <nav class="nav nav-pills bg-light">         
-        <button class="nav-link" [ngClass]="title===route[0]['title'] ? 'active' : ''" [routerLink]="[route[0]['path']]">Toán Tính</button>
-        <button class="nav-link" [ngClass]="title===route[1]['title'] ? 'active' : ''" [routerLink]="[route[1]['path']]">Toán So Sánh</button> 
+      <button *ngFor="let item of route; index as j"
+        class="nav-link" 
+        [ngClass]="title===item['title'] ? 'active' : ''" 
+        [routerLink]="[item['path']]"
+      >
+        {{ nav_names[j] }}
+      </button>
+
+        <!-- <button class="nav-link" [ngClass]="title===route[0]['title'] ? 'active' : ''" [routerLink]="[route[0]['path']]">Toán Tính</button>
+        <button class="nav-link" [ngClass]="title===route[1]['title'] ? 'active' : ''" [routerLink]="[route[1]['path']]">Toán So Sánh</button>  -->
       </nav>
       
       <router-outlet></router-outlet>
@@ -29,7 +37,8 @@ import {routes} from './app.routes'
 })
 export class AppComponent {
   title: string = '';
-  route = routes
+  route = routes;
+  nav_names: string[] = ['Toán Tính', 'Toán So Sánh', 'Tỉ Lệ Thức']
 
   constructor(private eventService: EventService){
     this.eventService.listen('updateTitle', (title: string)=>{
