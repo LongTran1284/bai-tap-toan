@@ -82,12 +82,7 @@ export class TilethucComponent {
       let gcd: number = this.dvs.gcd(x_value, y_value)
 
       let result = eval(`${x_value} ${tinh} ${y_value}`)
-      let congtru = `x ${tinh} y = ${result}`
-      // let tile = `x/y=${x_value/gcd}/${y_value/gcd}`
-      // console.log('x_value:', x_value, 'y_value:', y_value, tinh, 'result:', result)
-      // console.log('x_value:', x_value, 'y_value:', y_value, 'gcd:', gcd)
-      // console.log('congtru:', congtru)
-      // console.log('tile:', tile)
+      let congtru = `x ${tinh} y = ${result}`      
 
       this.values.push(
         {
@@ -100,7 +95,7 @@ export class TilethucComponent {
       )
 
     }
-    console.log(this.values)
+    // console.log(this.values)
   }
 
   
