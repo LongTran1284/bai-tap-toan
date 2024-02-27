@@ -23,9 +23,10 @@ import { CommonModule } from '@angular/common';
           (undo_click)="undo_click()"
           [level]="level"
           (radio_change)="level = $event; complete = 0"
-        ></sosanh-header>        
+        >
+          <div class="my-3 ">Hoàn thành: {{ complete }}/{{ total }}</div>
+        </sosanh-header>        
       </div>
-      <div class="my-3 mx-3">Hoàn thành: {{ complete }}/{{ total }}</div>
       <div class="mt-3">      
         <div *ngIf="level==='simple'">
           <simple-compare

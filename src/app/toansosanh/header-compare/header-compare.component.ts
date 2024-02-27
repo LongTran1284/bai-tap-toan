@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [FormsModule],
   template: `
-    <div class="container shadow-sm px-3">
+  <div class="container shadow-sm px-3">
     <div class="row">
       <div class="col-5">        
         <div >
@@ -51,6 +51,10 @@ import { FormsModule } from '@angular/forms';
       </div>
       </div>
     </div>
+    <div class="row">
+      <ng-content></ng-content>
+    </div>
+    
   </div>
   `,
   styleUrl: './header-compare.component.css'
