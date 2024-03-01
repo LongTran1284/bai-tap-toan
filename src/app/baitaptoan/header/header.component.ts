@@ -87,15 +87,19 @@ export class HeaderComponent {
   @Output() radio_change = new EventEmitter();
 
   @Input() pheptoan: string = 'nhan';
+  // settings: any = {
+  //   nhan: {num1: 4, num2: 1, sl: 8},
+  //   chia: {num1: 4, num2: 1, sl: 5},
+  //   cong: {num1: 4, num2: 4, sl: 8},
+  //   tru: {num1: 4, num2: 3, sl: 9}
+  // }
   settings: any = {
-    nhan: {num1: 4, num2: 1, sl: 8},
-    chia: {num1: 4, num2: 1, sl: 5},
-    cong: {num1: 4, num2: 4, sl: 8},
-    tru: {num1: 4, num2: 3, sl: 9}
+    nhan: {num1: 1, num2: 1, sl: 8},
+    chia: {num1: 2, num2: 1, sl: 5},
+    cong: {num1: 1, num2: 1, sl: 8},
+    tru: {num1: 2, num2: 1, sl: 9}
   }
-  // num1!: number 
-  // num2!: number 
-  // soluongbai: number = 6;
+  
   
   texts: any = {
     nhan: {text1: 'Thừa số thứ nhất có', text2: 'Thừa số thứ hai có', width: 156},

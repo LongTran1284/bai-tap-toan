@@ -111,6 +111,7 @@ export class ComplexItemComponent {
     pass: boolean = false
     @Input() num1: number = 0
     @Input() num2: number = 0
+    @Input() id: number = 0
 
     
     val1: any = {}
@@ -169,16 +170,16 @@ export class ComplexItemComponent {
 
         if (value===result){
             this.pass = true
-            this.eventService.emitt('updateSoSanh', 1)
+            this.eventService.emitt('updateSoSanh', {id: this.id, pass: true})
         } else {
-            if (this.pass){this.eventService.emitt('updateSoSanh', -1)}
+            if (this.pass){this.eventService.emitt('updateSoSanh', {id: this.id, pass: false})}
             this.pass=false
         }
         
     }
 
     clearCompare(){
-        if (this.pass){this.eventService.emitt('updateSoSanh', -1)}
+        if (this.pass){this.eventService.emitt('updateSoSanh', {id: this.id, pass: false})}
         this.value = ''
         this.pass = false
     }

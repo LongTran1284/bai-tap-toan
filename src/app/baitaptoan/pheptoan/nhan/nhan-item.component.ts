@@ -5,6 +5,7 @@ import { DebaiComponent } from '../../input-template/debai.component';
 import { TinhtoanComponent } from '../../input-template/tinhtoan.component';
 import { CommonModule } from '@angular/common';
 import { ClearComponent } from '../../clear/clear.component';
+import { EventService } from '../../../services/EventService';
 
 @Component({
   selector: 'nhan-item',
@@ -45,14 +46,18 @@ import { ClearComponent } from '../../clear/clear.component';
 export class NhanItemComponent {
     @Input() thuaso1!: number;
     @Input() thuaso2!: number;
+    @Input() id: number = 0;
 
     step: number = 1;
     num_len: number = 1
     counter = Array;
-    pass: boolean = false;    
+    pass: boolean = false; 
+    clear: boolean = false;    
     form_groups: any[] = []
     resultForm = new FormGroup({})
        
+    constructor(private eventService: EventService){}
+
     ngOnInit(){
         let s1 = this.thuaso1.toString().length, s2 = this.thuaso2.toString().length
         this.num_len = Math.max(s1, s2) + 1        
@@ -60,9 +65,13 @@ export class NhanItemComponent {
     }
         
     clearTinhToan(){               
-        this.form_groups.forEach(group => group.reset())    
+        if (this.pass){this.eventService.emitt('updateToanTinh', {id: this.id, pass: false})}
+        this.clear = true
+        // do not check result when click clear button
+        this.form_groups.forEach(group => group.reset())            
         this.resultForm.reset()
         this.pass = false     
+        this.clear = false
     }
 
     collectForm(form: FormGroup, pos: number){
@@ -75,13 +84,17 @@ export class NhanItemComponent {
         this.resultForm = form  // in order to clear it        
 
         // check result also:
-        let form_dict = form.value
-        let values = Object.values(form_dict).join('')
-        let result = this.thuaso1 * this.thuaso2
-        if (Number(values) === result){
-            this.pass = true
-        } else {
-            this.pass = false
-        }      
+        if (!this.clear){
+            let form_dict = form.value
+            let values = Object.values(form_dict).join('')
+            let result = this.thuaso1 * this.thuaso2
+            if (Number(values) === result){
+                this.pass = true
+                this.eventService.emitt('updateToanTinh', {id: this.id, pass: true})
+            } else {
+                if (this.pass){this.eventService.emitt('updateToanTinh', {id: this.id, pass: false})}
+                this.pass = false
+            }      
+        }        
     }    
 }

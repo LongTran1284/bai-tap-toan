@@ -1,6 +1,6 @@
 
 import { Component, Input } from '@angular/core';
-import { WorkInterface } from '../workinterface'; 
+import { WorkInterface } from '../../shared/interface/workinterface'; 
 import { ClearComponent } from '../../baitaptoan/clear/clear.component';
 import { FormsModule } from '@angular/forms';
 import { EventService } from '../../services/EventService';
@@ -53,15 +53,24 @@ import { EventService } from '../../services/EventService';
 })
 export class ItemTilethucComponent {
     @Input() item!: WorkInterface 
+    @Input() id: number = 0
     pass: boolean = false
     x_value!: string
     y_value!: string
 
     constructor(private eventService: EventService){
+        // const destroyRef = inject(DestroyRef)
+        // destroyRef.onDestroy(()=>{
+        //     // this.eventService.emitt('onDelete', {id: this.id, pass: this.pass})
+        //     if (this.pass){this.eventService.emitt('updateTiLeThuc', -1)}
+        //     // console.log('Oh my God')
+        // })
     }
 
+
+
     clearTinhToan(){
-        if (this.pass){this.eventService.emitt('updateTiLeThuc', -1)}
+        if (this.pass){this.eventService.emitt('updateTiLeThuc', {id: this.id, pass: false})}
         this.pass = false
         this.x_value = ''
         this.y_value = ''
@@ -70,11 +79,10 @@ export class ItemTilethucComponent {
     checkResult(){
         if (parseInt(this.x_value) === this.item.x && parseInt(this.y_value) === this.item.y){
             this.pass = true
-            this.eventService.emitt('updateTiLeThuc', 1)
+            this.eventService.emitt('updateTiLeThuc', {id: this.id, pass: true})
         } else {
-            if (this.pass){this.eventService.emitt('updateTiLeThuc', -1)}
-            this.pass = false
-            
+            if (this.pass){this.eventService.emitt('updateTiLeThuc', {id: this.id, pass: false})}
+            this.pass = false            
         }
     }
 }

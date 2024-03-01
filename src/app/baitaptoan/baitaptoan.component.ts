@@ -9,6 +9,32 @@ import { TruComponent } from './pheptoan/tru/tru.component';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { EventService } from '../services/EventService';
+import { WorkInterface } from '../shared/interface/workinterface';
+import { UndoInterface } from '../shared/interface/undointerface';
+
+const keys = ['chia', 'nhan', 'cong', 'tru'];
+const createDict = () => {
+  let values: any = {};
+  let undo_list: any = {};
+  let complete: any = {};
+  let undo_complete: any = {};
+  
+  for (let k of keys){  
+    let variable1 : WorkInterface[] = [];
+    let variable2 : UndoInterface[] = [];
+    let variable3 : number[] = [];
+    let variable4 : number = 0; 
+  
+    values[k] = variable1;
+    undo_list[k] = variable2;
+    undo_complete[k] = variable3;
+    complete[k] = variable4;
+  };
+
+  return [values, undo_list, undo_complete, complete]
+}
+
+
 
 @Component({
   selector: 'baitaptoan',
@@ -27,47 +53,34 @@ import { EventService } from '../services/EventService';
           [pheptoan]="pheptoan"
           (radio_change)="pheptoan = $event"
         ></app-header>
+        <div class="my-3">Hoàn thành: {{ complete[pheptoan] }}/{{ values[pheptoan].length }}</div>
       </div>
         
-
       <div class="position-relative">
-        <div class="my-4 position-absolute top-0"  *ngIf=" value_dict['chia'][0].length"
+        <div class="my-4 position-absolute top-0"  *ngIf=" values['chia'].length"
         [ngClass]="pheptoan==='chia'?'visible ' : 'invisible'"
-        >          
-          <chia
-            [sobichia_list]="value_dict['chia'][0]"
-            [sochia_list]="value_dict['chia'][1]"
-          ></chia>
+        >                    
+          <chia [works]="values['chia']" ></chia>
         </div>
 
-        <div class="my-4 position-absolute top-0"  *ngIf=" value_dict['nhan'][0].length"
+        <div class="my-4 position-absolute top-0"  *ngIf=" values['nhan'].length"
         [ngClass]="pheptoan==='nhan'?'visible ' : 'invisible'"
-        >          
-          <nhan
-            [thuaso1_list]="value_dict['nhan'][0]"
-            [thuaso2_list]="value_dict['nhan'][1]"
-          ></nhan>
+        >       
+          <nhan [works]="values['nhan']"></nhan>
         </div>
 
-        <div class="my-4 position-absolute top-0" *ngIf="value_dict['cong'][0].length"
+        <div class="my-4 position-absolute top-0" *ngIf="values['cong'].length"
         [ngClass]="pheptoan==='cong'?'visible ' : 'invisible'"
-        >          
-          <cong
-            [sohang1_list]="value_dict['cong'][0]"
-            [sohang2_list]="value_dict['cong'][1]"
-          ></cong>
+        > 
+          <cong [works]="values['cong']"></cong>
         </div>
 
-        <div class="my-4 position-absolute top-0" *ngIf="value_dict['tru'][0].length"
+        <div class="my-4 position-absolute top-0" *ngIf="values['tru'].length"
         [ngClass]="pheptoan==='tru'?'visible ' : 'invisible'"
-        >          
-          <tru
-            [sobitru_list]="value_dict['tru'][0]"
-            [sotru_list]="value_dict['tru'][1]"
-          ></tru>
+        > 
+          <tru [works]="values['tru']"></tru>
         </div>
       </div>
-    
     </div>
   `,
   styleUrl: './baitaptoan.component.css'
@@ -75,70 +88,71 @@ import { EventService } from '../services/EventService';
 export class BaitaptoanComponent {
   pheptoan: string = 'chia'
 
-  value_dict: any = {
-    'chia': [[], [], 0],
-    'nhan': [[], [], 0],
-    'cong': [[], [], 0],
-    'tru': [[], [], 0]
-  }
-  undo_dict: any = {'chia': [], 'nhan': [], 'cong': [], 'tru': []};
-  
+  mylist: any[] = createDict()
+  values: any = this.mylist[0]
+  undo_list: any = this.mylist[1]
+  undo_complete: any = this.mylist[2]
+  complete: any = this.mylist[3]
+    
   constructor(
     private random: RandomService, 
     private route: ActivatedRoute, 
     private eventService: EventService
   ){      
       this.eventService.emitt('updateTitle', this.route.snapshot.title)
-      // console.log('title:', this.route.snapshot.title)
+      this.eventService.listen('updateToanTinh', (comp: any)=> {
+        // console.log(comp)
+        if (comp.pass){
+          this.complete[this.pheptoan]++
+          this.undo_complete[this.pheptoan].push(comp.id)
+        } else {
+          this.complete[this.pheptoan]-- ;
+          let index = this.undo_complete[this.pheptoan].indexOf(comp.id)
+          this.undo_complete[this.pheptoan].splice(index, 1)
+        }
+      })      
   }
 
 
   generateList(num: any){    
     for (let x=0; x < num[2]; x++) {            
       let num1 = this.random.generateRandom(num[0]);
-      let num2 = this.random.generateRandom(num[1])
-      
-      this.value_dict[this.pheptoan][0].push(num1)
-      this.value_dict[this.pheptoan][1].push(num2)    
+      let num2 = this.random.generateRandom(num[1])     
+      this.values[this.pheptoan].push({x: num1, y: num2})    
+    }      
+
+    this.undo_list[this.pheptoan].push({
+      index: this.values[this.pheptoan].length ? this.values[this.pheptoan].length - num[2] : 0, 
+      qty: num[2]})
+  }
+
+  clearAll(){    
+    for (let k of keys){
+      this.values[k] = []
+      this.undo_list[k] = []
+      this.undo_complete[k] = []
+      this.complete[k] = 0
     }    
-    
-
-    let start = this.value_dict[this.pheptoan][2];
-    let stop = num[2] + this.value_dict[this.pheptoan][2];
-    this.value_dict[this.pheptoan][2] += num[2]
-    // console.log('start: ', start, 'stop: ', stop)
-
-    let count_array = this.random.createRange(start, stop)    
-    this.undo_dict[this.pheptoan].push(count_array)
-    // console.log(this.value_dict[this.pheptoan])
   }
 
-  clearAll(){
-    this.value_dict['chia']= [[], [], 0]; 
-    this.value_dict['nhan'] = [[], [], 0];
-    this.value_dict['cong'] = [[], [], 0]
-    this.value_dict['tru'] = [[], [], 0]
-  }
+  undo_click(){    
+    if (this.undo_list[this.pheptoan].length){
+      const undo_item = this.undo_list[this.pheptoan].pop();
+      if (undo_item !== undefined) {        
+        this.values[this.pheptoan].splice(undo_item.index, undo_item.qty)
 
-  undo_click(){
-    if (this.undo_dict[this.pheptoan].length) {
-      const remove_index = this.undo_dict[this.pheptoan].pop();
-      let list_1 = this.value_dict[this.pheptoan][0];
-      let list_2 = this.value_dict[this.pheptoan][1];
-      
-      let new_list_1: number[] = [];
-      let new_list_2: number[] = [];
-
-      for (let x = 0; x < list_1.length; x++) {
-        if (!remove_index.includes(x)) {
-          new_list_1.push(list_1[x])
-          new_list_2.push(list_2[x])
-        }       
-      }
-            
-      this.value_dict[this.pheptoan][0] = new_list_1;
-      this.value_dict[this.pheptoan][1] = new_list_2;
-      this.value_dict[this.pheptoan][2] -= remove_index.length      
-    } 
+        // update complete (if exists)
+        let max = undo_item.index + undo_item.qty
+        let new_complete: number[] = []
+        if (this.undo_complete[this.pheptoan].length){
+          for (let j of this.undo_complete[this.pheptoan]){
+            if (j >= undo_item.index && j < max){
+              this.complete[this.pheptoan]--              
+            } else (new_complete.push(j))
+          }
+          this.undo_complete[this.pheptoan] = new_complete
+        }        
+      }   
+    }
   }
 }

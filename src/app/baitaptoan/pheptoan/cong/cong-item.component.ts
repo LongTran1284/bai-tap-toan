@@ -3,6 +3,7 @@ import { DebaiComponent } from '../../input-template/debai.component';
 import { TinhtoanComponent } from '../../input-template/tinhtoan.component';
 import { ClearComponent } from '../../clear/clear.component';
 import { FormGroup } from '@angular/forms';
+import { EventService } from '../../../services/EventService';
 
 @Component({
   selector: 'cong-item',
@@ -39,10 +40,14 @@ import { FormGroup } from '@angular/forms';
 export class CongItemComponent {
     @Input() sohang1!: number
     @Input() sohang2!: number
+    @Input() id: number = 0
 
     num_len: number = 1
-    pass: boolean = false;    
+    pass: boolean = false;
+    clear: boolean = false;    
     resultForm = new FormGroup({})
+
+    constructor(private eventService: EventService){}
         
     ngOnInit(){
         let s1 = this.sohang1.toString().length, s2 = this.sohang2.toString().length
@@ -50,21 +55,30 @@ export class CongItemComponent {
     }    
         
     clearTinhToan(){         
+        if (this.pass){this.eventService.emitt('updateToanTinh', {id: this.id, pass: false})}
+        this.clear = true
+        // do not check result when click clear button
         this.resultForm.reset()
-        this.pass = false                    
+        this.pass = false   
+        this.clear = false                 
     }
 
     getResult(form: FormGroup){
         this.resultForm = form  // in order to clear it
 
         // check result also:
-        let form_dict = form.value
-        let values = Object.values(form_dict).join('')
-        let result = this.sohang1 + this.sohang2
-        if (Number(values) === result){
-            this.pass = true
-        } else {
-            this.pass = false
-        }      
+        if (!this.clear){
+            let form_dict = form.value
+            let values = Object.values(form_dict).join('')
+            let result = this.sohang1 + this.sohang2
+            if (Number(values) === result){
+                this.pass = true
+                this.eventService.emitt('updateToanTinh', {id: this.id, pass: true})
+            } else {
+                if (this.pass){this.eventService.emitt('updateToanTinh', {id: this.id, pass: false})}
+                this.pass = false
+            }      
+        }
+        
     }    
 }

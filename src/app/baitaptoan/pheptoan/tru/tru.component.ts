@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { TruItemComponent } from './tru-item.component';
+import { WorkInterface } from '../../../shared/interface/workinterface';
 
 @Component({
   selector: 'tru',
@@ -10,15 +11,15 @@ import { TruItemComponent } from './tru-item.component';
   ],
   template: `
     <div class="container tru px-0 shadow-sm d-flex flex-wrap justify-content-between" >
-      <tru-item *ngFor="let sobitru of sobitru_list; index as j"
-        [sobitru]="sobitru"
-        [sotru]="sotru_list[j]"
+      <tru-item *ngFor="let work of works; index as j"
+        [sobitru]="work.x"
+        [sotru]="work.y"
+        [id]="j"
       ></tru-item>
     </div>
   `,
   styleUrl: './tru.component.css'
 })
-export class TruComponent {
-  @Input() sobitru_list: number[] = []
-  @Input() sotru_list: number[] = []
+export class TruComponent {  
+  @Input() works: WorkInterface[] = []
 }

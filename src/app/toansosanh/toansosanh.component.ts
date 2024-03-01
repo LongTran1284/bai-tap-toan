@@ -6,6 +6,8 @@ import { SimpleCompareComponent } from './simple-compare/simple-compare.componen
 import { RandomService } from '../services/random.service';
 import { ComplexCompareComponent } from './complex-compare/complex-compare.component';
 import { CommonModule } from '@angular/common';
+import { UndoInterface } from '../shared/interface/undointerface';
+import { WorkInterface } from '../shared/interface/workinterface';
 
 @Component({
   selector: 'toansosanh',
@@ -29,15 +31,13 @@ import { CommonModule } from '@angular/common';
       </div>
       <div class="mt-3">      
         <div *ngIf="level==='simple'">
-          <simple-compare
-            [num_list_1]="num_list_1"
-            [num_list_2]="num_list_2"
+          <simple-compare            
+            [works]="values"
           ></simple-compare>
         </div>
         <div *ngIf="level==='complex'">
-          <complex-compare
-            [num_list_1]="num_list_1"
-            [num_list_2]="num_list_2"
+          <complex-compare            
+            [works]="values"
           ></complex-compare>
         </div>
       </div>
@@ -46,12 +46,13 @@ import { CommonModule } from '@angular/common';
   `,
   styleUrl: './toansosanh.component.css'
 })
-export class ToansosanhComponent {
-  num_list_1: any[] = [];
-  num_list_2: any[] = []
+export class ToansosanhComponent {  
   level: string = 'complex'
   complete: number = 0
   total: number = 0
+  undo_list: UndoInterface[] = []
+  undo_complete: number[] = []
+  values: WorkInterface[] = []
   
   constructor(
     private route: ActivatedRoute, 
@@ -59,7 +60,16 @@ export class ToansosanhComponent {
     private random: RandomService
     ){
     this.eventService.emitt('updateTitle', this.route.snapshot.title)
-    this.eventService.listen('updateSoSanh', (comp: number)=> this.complete += comp)
+    this.eventService.listen('updateSoSanh', (comp: any)=> {
+      if (comp.pass){
+        this.complete++
+        this.undo_complete.push(comp.id)
+      } else {
+        this.complete-- ;
+        let index = this.undo_complete.indexOf(comp.id)
+        this.undo_complete.splice(index, 1)
+      }
+    })
   }
 
 
@@ -82,18 +92,38 @@ export class ToansosanhComponent {
         num2 = this.random.generateRandom(num[0])
       }
 
-      this.num_list_1.push(num1);
-      this.num_list_2.push(num2);
+      this.values.push({x: num1, y: num2})
     }
+    this.undo_list.push({index: this.total, qty: num[1]})
     this.total += num[1]
     
   }
 
-  clearAll(){
-
+  clearAll(){    
+    this.values = []
+    this.complete = 0
+    this.total = 0
   }
 
   undo_click(){
+    if (this.values.length){
+      const undo_item = this.undo_list.pop();
+      if (undo_item !== undefined) {        
+        this.values.splice(undo_item.index, undo_item.qty)
+        this.total -= undo_item.qty
 
+        // update complete (if exists)
+        let max = undo_item.index + undo_item.qty
+        let new_complete: number[] = []
+        if (this.undo_complete.length){
+          for (let j of this.undo_complete){
+            if (j >= undo_item.index && j < max){
+              this.complete--              
+            } else (new_complete.push(j))
+          }
+          this.undo_complete = new_complete
+        }        
+      }   
+    }
   }
 }

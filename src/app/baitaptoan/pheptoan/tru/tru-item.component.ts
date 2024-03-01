@@ -4,6 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { DebaiComponent } from '../../input-template/debai.component';
 import { TinhtoanComponent } from '../../input-template/tinhtoan.component';
 import { ClearComponent } from '../../clear/clear.component';
+import { EventService } from '../../../services/EventService';
 
 @Component({
   selector: 'tru-item',
@@ -40,31 +41,44 @@ import { ClearComponent } from '../../clear/clear.component';
 export class TruItemComponent {
     @Input() sobitru!: number
     @Input() sotru!: number
+    @Input() id: number = 0
 
     num_len: number = 1
     pass: boolean = false;    
     resultForm = new FormGroup({})
-        
+    clear: boolean = false
+    
+    constructor(private eventService: EventService){}
+
     ngOnInit(){
         this.num_len = this.sobitru.toString().length     
     }
         
     clearTinhToan(){                
+        if (this.pass){this.eventService.emitt('updateToanTinh', {id: this.id, pass: false})}
+        this.clear = true
+        // do not check result when click clear button
         this.resultForm.reset() 
         this.pass = false     
+        this.clear = false
     }
 
     getResult(form: FormGroup){
         this.resultForm = form  // in order to clear it
 
         // check result also:
-        let form_dict = form.value
-        let values = Object.values(form_dict).join('')
-        let result = this.sobitru - this.sotru
-        if (Number(values) === result){
-            this.pass = true
-        } else {
-            this.pass = false
-        }      
+        if (!this.clear){
+            let form_dict = this.resultForm.value
+            let values = Object.values(form_dict).join('')            
+            let result = this.sobitru - this.sotru
+            if (Number(values) === result){
+                this.pass = true
+                this.eventService.emitt('updateToanTinh', {id: this.id, pass: true})
+            } else {
+                if (this.pass){this.eventService.emitt('updateToanTinh', {id: this.id, pass: false})}
+                this.pass = false
+            }      
+        }
+        
     }    
 }

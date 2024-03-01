@@ -4,6 +4,7 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClearComponent } from '../../clear/clear.component';
 import { DebaiComponent } from '../../input-template/debai.component';
 import { TinhtoanComponent } from '../../input-template/tinhtoan.component';
+import { EventService } from '../../../services/EventService';
 
 
 
@@ -46,11 +47,14 @@ import { TinhtoanComponent } from '../../input-template/tinhtoan.component';
 export class ChiaItemComponent {
     @Input() sobichia!: number;
     @Input() sochia!: number;
+    @Input() id: number = 0;
+
 
     step: number = 1;
     num_len: number = 1
     counter = Array;
-    pass: boolean = false;    
+    pass: boolean = false;  
+    clear: boolean = false;    
     pass_style: string = 'flex-direction: column; min-height: 70px'
     form_groups: any[] = []
     form_groups_B: any[] = []
@@ -62,6 +66,7 @@ export class ChiaItemComponent {
     sole: number = 0
     pass_pos!: any // the position get the pass=true
        
+    constructor(private eventService: EventService){}
 
     ngOnInit(){
         this.num_len = this.sobichia.toString().length
@@ -77,12 +82,16 @@ export class ChiaItemComponent {
     }
         
     clearTinhToan(){               
+        if (this.pass){this.eventService.emitt('updateToanTinh', {id: this.id, pass: false})}
+        this.clear = true
+        // do not check result when click clear button
         this.form_groups.forEach(group => group.reset()) 
-        this.form_groups_B.forEach(group => group.reset())       
+        this.form_groups_B.forEach(group => group.reset())              
         this.resultForm.reset()
         this.pass = false 
         this.pass_pos = undefined
         this.form_groups_B = []
+        this.clear = false
     }
 
     collectForm(group: any[], form: FormGroup, pos: number){
@@ -98,26 +107,29 @@ export class ChiaItemComponent {
     }    
 
     checkResult(pos: number){
-        let last_pos: number
-        if (this.pass_pos){
-            last_pos = this.pass_pos
-        } else {
-            last_pos = this.form_groups_B.length - 1
-        }
-
-        let last_form = this.form_groups_B[last_pos]
-        // console.log('pos:', pos, 'pass_pos:', this.pass_pos, this.pass, this.form_groups_B.length)
-
-        if (this.pass && pos > this.pass_pos){return}
-
-        this.value_remain = Number(Object.values(last_form.value).join(''))
-
-        if (this.value_abs === this.result && this.value_remain === this.sole){
-            this.pass = true
-            if (!this.pass_pos) {this.pass_pos = pos}
-        } else {
-            this.pass = false
-            // this.pass_pos = undefined
-        }    
+        if (!this.clear){
+            let last_pos: number
+            if (this.pass_pos){
+                last_pos = this.pass_pos
+            } else {
+                last_pos = this.form_groups_B.length - 1
+            }
+    
+            let last_form = this.form_groups_B[last_pos]
+            // console.log('pos:', pos, 'pass_pos:', this.pass_pos, this.pass, this.form_groups_B.length)
+    
+            if (this.pass && pos > this.pass_pos){return}
+    
+            this.value_remain = Number(Object.values(last_form.value).join(''))
+    
+            if (this.value_abs === this.result && this.value_remain === this.sole){
+                this.eventService.emitt('updateToanTinh', {id: this.id, pass: true})
+                this.pass = true
+                if (!this.pass_pos) {this.pass_pos = pos}
+            } else {
+                if (this.pass){this.eventService.emitt('updateToanTinh', {id: this.id, pass: false})}
+                this.pass = false
+            }    
+        }        
     }
 }

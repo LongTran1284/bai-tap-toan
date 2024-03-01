@@ -8,7 +8,8 @@ import { RandomService } from '../services/random.service';
 import { BtnGroupComponent } from '../shared/btn-group/btn-group.component';
 import { DivisorService } from '../services/divisor.service';
 import { WorkTilethucComponent } from './work-tilethuc/work-tilethuc.component';
-import { WorkInterface } from './workinterface'; 
+import { WorkInterface } from '../shared/interface/workinterface'; 
+import { UndoInterface } from '../shared/interface/undointerface';
 
 @Component({
   selector: 'app-tilethuc',
@@ -20,8 +21,7 @@ import { WorkInterface } from './workinterface';
     WorkTilethucComponent
   ],
   template: `
-    <div class="container-fluid p-3 shadow mb-5 bg-body rounded">
-      
+    <div class="container-fluid p-3 shadow mb-5 bg-body rounded">      
       <div class="container mb-3">
         <btn-group
           (generate_click)="createNumList()"
@@ -44,16 +44,27 @@ export class TilethucComponent {
   digit_number: number = 2 // number has 2 digits
   values: WorkInterface[] = [];
   total: number = 0
-  complete: number = 0
+  complete: number = 0  
+  undo_list: UndoInterface[] = []
+  undo_complete: number[] = []
 
   constructor(
     private random: RandomService, 
     private route: ActivatedRoute, 
     private eventService: EventService,
-    private dvs: DivisorService
+    private dvs: DivisorService,
   ){      
       this.eventService.emitt('updateTitle', this.route.snapshot.title)
-      this.eventService.listen('updateTiLeThuc', (comp: number)=> this.complete += comp)
+      this.eventService.listen('updateTiLeThuc', (comp: any)=> {
+        if (comp.pass){
+          this.complete++
+          this.undo_complete.push(comp.id)
+        } else {
+          this.complete-- ;
+          let index = this.undo_complete.indexOf(comp.id)
+          this.undo_complete.splice(index, 1)
+        }
+      })      
   }
 
   createNumList(){
@@ -74,7 +85,7 @@ export class TilethucComponent {
 
       // choose a random divisor in x_divisors. Meets some conditions
       let divisor = this.random.randomValue(x_divisors)
-      while (y_value * divisor > 100 || y_value * divisor === x_value) {
+      while ( y_value * divisor > 100 ||  y_value * divisor === x_value) {
         divisor = this.random.randomValue(x_divisors)
       }
             
@@ -83,34 +94,49 @@ export class TilethucComponent {
 
       // find the greatest common divisor of x_value and y_value
       let gcd: number = this.dvs.gcd(x_value, y_value)
-
       let result = eval(`${x_value} ${tinh} ${y_value}`)
       let congtru = `x ${tinh} y = ${result}`      
 
-      this.values.push(
-        {
+      this.values.push({
           x: x_value,
           y: y_value,
           pheptinh: congtru,
           phanso_x: x_value/gcd,
           phanso_y: y_value/gcd
-        }
-      )
-
+      })
     }
-    this.total += sl
     console.log(this.values)
+    this.undo_list.push({index: this.total, qty: sl})
+    this.total += sl    
   }
-
   
 
   clearAll(){
     this.values = []
+    this.undo_list = []
     this.total = 0
     this.complete = 0
   }
 
-  undo_click(){
+  undo_click(){    
+    if (this.values.length){
+      const undo_item = this.undo_list.pop();
+      if (undo_item !== undefined) {        
+        this.values.splice(undo_item.index, undo_item.qty)
+        this.total -= undo_item.qty
 
+        // update complete (if exists)
+        let max = undo_item.index + undo_item.qty
+        let new_complete: number[] = []
+        if (this.undo_complete.length){
+          for (let j of this.undo_complete){
+            if (j >= undo_item.index && j < max){
+              this.complete--              
+            } else (new_complete.push(j))
+          }
+          this.undo_complete = new_complete
+        }        
+      }   
+    }
   }
 }
